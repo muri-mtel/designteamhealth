@@ -528,53 +528,8 @@
 <footer>No individual scores shown — only anonymous team averages</footer>
 
 <script>
-/* ── Data ── */
-const raw = [
-  {d:"2025-10-03",w:8,s:7},
-  {d:"2025-10-06",w:6,s:7},{d:"2025-10-06",w:6,s:7},{d:"2025-10-06",w:5,s:6},
-  {d:"2025-10-13",w:5,s:6},
-  {d:"2025-10-17",w:7,s:7},{d:"2025-10-17",w:7,s:7},
-  {d:"2025-10-24",w:7,s:7},{d:"2025-10-24",w:4,s:7},{d:"2025-10-24",w:8,s:4},
-  {d:"2025-10-31",w:6,s:7},{d:"2025-10-31",w:6,s:8},{d:"2025-10-31",w:7,s:7},{d:"2025-10-31",w:5,s:5},
-  {d:"2025-11-07",w:8,s:3},{d:"2025-11-07",w:5,s:6},{d:"2025-11-07",w:8,s:4},{d:"2025-11-07",w:5,s:7},{d:"2025-11-07",w:8,s:3},
-  {d:"2025-11-14",w:7,s:5},{d:"2025-11-14",w:5,s:5},{d:"2025-11-14",w:6,s:5},{d:"2025-11-14",w:8,s:3},
-  {d:"2025-11-21",w:5,s:6},{d:"2025-11-21",w:5,s:7},{d:"2025-11-21",w:6,s:6},
-  {d:"2025-11-28",w:6,s:5},{d:"2025-11-28",w:8,s:3},{d:"2025-11-28",w:5,s:7},
-  {d:"2025-12-05",w:7,s:5},{d:"2025-12-05",w:6,s:6},
-  {d:"2025-12-12",w:5,s:7},{d:"2025-12-12",w:4,s:5},{d:"2025-12-12",w:4,s:7},{d:"2025-12-12",w:5,s:6},{d:"2025-12-12",w:5,s:6},
-  {d:"2025-12-19",w:6,s:7},{d:"2025-12-19",w:5,s:7},{d:"2025-12-19",w:5,s:7},{d:"2025-12-19",w:6,s:6},
-  {d:"2025-12-26",w:3,s:8},{d:"2025-12-26",w:8,s:7},{d:"2025-12-26",w:4,s:8},{d:"2025-12-26",w:6,s:7},{d:"2025-12-26",w:4,s:8},{d:"2025-12-26",w:4,s:8},
-  {d:"2026-01-02",w:2,s:8},
-  {d:"2026-01-09",w:4,s:8},{d:"2026-01-09",w:3,s:3},{d:"2026-01-09",w:8,s:7},{d:"2026-01-09",w:5,s:4},{d:"2026-01-09",w:8,s:6},{d:"2026-01-09",w:5,s:7},
-  {d:"2026-01-16",w:3,s:7},{d:"2026-01-16",w:5,s:6},{d:"2026-01-16",w:4,s:8},{d:"2026-01-16",w:4,s:6},{d:"2026-01-16",w:7,s:4},{d:"2026-01-16",w:7,s:4},{d:"2026-01-16",w:7,s:5},
-  {d:"2026-01-23",w:8,s:5},{d:"2026-01-23",w:4,s:6},{d:"2026-01-23",w:8,s:5},{d:"2026-01-23",w:5,s:7},{d:"2026-01-23",w:3,s:2},
-  {d:"2026-01-30",w:6,s:6},{d:"2026-01-30",w:6,s:5},{d:"2026-01-30",w:7,s:4},{d:"2026-01-30",w:2,s:4},{d:"2026-01-30",w:6,s:7},
-  {d:"2026-02-06",w:6,s:7},{d:"2026-02-06",w:8,s:5},{d:"2026-02-06",w:5,s:5},{d:"2026-02-06",w:5,s:6},{d:"2026-02-06",w:5,s:5},
-  {d:"2026-02-13",w:7,s:6},{d:"2026-02-13",w:5,s:7},{d:"2026-02-13",w:7,s:5},{d:"2026-02-13",w:8,s:4},{d:"2026-02-13",w:6,s:5},
-  {d:"2026-02-20",w:5,s:6},{d:"2026-02-20",w:6,s:5},{d:"2026-02-20",w:9,s:4},{d:"2026-02-20",w:6,s:6},{d:"2026-02-20",w:5,s:7},
-  {d:"2026-02-27",w:5,s:6},{d:"2026-02-27",w:5,s:5},{d:"2026-02-27",w:6,s:7},{d:"2026-02-27",w:7,s:5},{d:"2026-02-27",w:5,s:5},
-  {d:"2026-03-06",w:5,s:6},{d:"2026-03-06",w:5,s:6},{d:"2026-03-06",w:5,s:6},{d:"2026-03-06",w:5,s:6},{d:"2026-03-06",w:5,s:5},
-  {d:"2026-03-13",w:6,s:5},{d:"2026-03-13",w:6,s:5},{d:"2026-03-13",w:5,s:5},{d:"2026-03-13",w:4,s:6},{d:"2026-03-13",w:5,s:5},
-  {d:"2026-03-20",w:6,s:7},{d:"2026-03-20",w:6,s:4},{d:"2026-03-20",w:5,s:3},
-  {d:"2026-03-27",w:5,s:5},{d:"2026-03-27",w:7,s:6},{d:"2026-03-27",w:7,s:5},{d:"2026-03-27",w:5,s:5},
-  {d:"2026-04-03",w:5,s:6},{d:"2026-04-03",w:7,s:4},{d:"2026-04-03",w:7,s:6},
-  {d:"2026-04-10",w:5,s:6},{d:"2026-04-10",w:6,s:7},{d:"2026-04-10",w:4,s:6},
-  {d:"2026-04-17",w:5,s:6},{d:"2026-04-17",w:6,s:6},{d:"2026-04-17",w:5,s:6},
-  {d:"2026-04-24",w:7,s:6},{d:"2026-04-24",w:5,s:5},{d:"2026-04-24",w:6,s:6},{d:"2026-04-24",w:3,s:3},
-  {d:"2026-05-01",w:5,s:5},
-];
-
-/* ── Group + average by week ── */
-const byDate = {};
-raw.forEach(r => { (byDate[r.d] = byDate[r.d] || []).push(r); });
-const weeks = Object.keys(byDate).sort().map(d => {
-  const e = byDate[d], n = e.length;
-  return { date:d, avgW:+(e.reduce((a,x)=>a+x.w,0)/n).toFixed(2), avgS:+(e.reduce((a,x)=>a+x.s,0)/n).toFixed(2), n };
-});
-const now  = weeks[weeks.length-1];
-const prev = weeks[weeks.length-2];
-const allW = weeks.map(w=>w.avgW);
-const allS = weeks.map(w=>w.avgS);
+/* ── Config ── */
+const DATA_URL = 'https://script.google.com/macros/s/AKfycbz2IOhnj6sYvPE3nafGfE7rD3m3HYYeecVUSNR1EEv3ymX8kL0bwswxBnmstLgz0euw/exec';
 
 /* ── Helpers ── */
 function fmtDate(d) {
@@ -585,8 +540,6 @@ function r1(n){ return Math.round(n*10)/10; }
 const COLOR_W = '#ff8c00';
 const COLOR_S = '#00d4ff';
 
-/* ── Scale-aware emoji labels ── */
-// Workload: 5 = ideal. Both extremes are problems.
 function workloadEmoji(v) {
   if (v <= 1.5) return { e:'🥱', label:'Nothing to do' };
   if (v <= 3)   return { e:'😴', label:'Very light' };
@@ -597,7 +550,6 @@ function workloadEmoji(v) {
   if (v <= 8.5) return { e:'🔥', label:'Too much' };
   return { e:'🚨', label:'Burnout risk' };
 }
-// Satisfaction: higher is always better. 5 = just a job.
 function satisfactionEmoji(v) {
   if (v <= 1.5) return { e:'💔', label:'In a bad place' };
   if (v <= 3)   return { e:'😞', label:'Very unhappy' };
@@ -623,157 +575,156 @@ function vibeState(w, s) {
   return { e:'🙂', title:'All Good',         desc:'Things are ticking along nicely this week.' };
 }
 
-/* ── Set last date ── */
-document.getElementById('lastDate').textContent = fmtDate(now.date).toUpperCase();
+/* ── Render ── */
+function render(weeks) {
+  const now  = weeks[weeks.length-1];
+  const prev = weeks[weeks.length-2];
+  const allW = weeks.map(w=>w.avgW);
+  const allS = weeks.map(w=>w.avgS);
 
-/* ── Gauge HTML (ASCII bar) ── */
-const BAR_W = 16;
-function gaugeHTML(value, color, label, isWorkload) {
-  const meta = isWorkload ? workloadEmoji(value) : satisfactionEmoji(value);
-  const diff = prev ? value - (isWorkload ? prev.avgW : prev.avgS) : null;
-  const filled = Math.round((value / 10) * BAR_W);
+  document.getElementById('lastDate').textContent = fmtDate(now.date).toUpperCase();
 
-  let ttag = '';
-  if (diff !== null) {
-    const abs = r1(Math.abs(diff));
-    if (Math.abs(diff) < 0.05) {
-      ttag = `<div class="ttag ttag-neutral">━ NO CHANGE</div>`;
-    } else {
-      const up = diff > 0;
-      const good = isWorkload ? !up : up;
-      const arrow = up ? '▲' : '▼';
-      const sign = up ? '+' : '';
-      ttag = `<div class="ttag ${good?'ttag-good':'ttag-bad'}">${arrow} ${sign}${abs} VS PREV</div>`;
-    }
-  }
+  const BAR_W = 16;
+  function gaugeHTML(value, color, label, isWorkload) {
+    const meta = isWorkload ? workloadEmoji(value) : satisfactionEmoji(value);
+    const diff = prev ? value - (isWorkload ? prev.avgW : prev.avgS) : null;
+    const filled = Math.round((value / 10) * BAR_W);
 
-  return `
-    <div class="card gauge-card">
-      <div class="g-label">${label}</div>
-      <div class="g-num" style="color:${color}">
-        <span class="count-up" data-target="${value}">0.0</span>
-      </div>
-      <div class="g-denom">/ 10</div>
-      <div class="g-bar-row">
-        <span class="g-bracket">[</span><span class="g-bar" style="color:${color}" data-filled="${filled}" data-total="${BAR_W}">${'░'.repeat(BAR_W)}</span><span class="g-bracket">]</span>
-      </div>
-      <div class="g-emoji">${meta.e}</div>
-      <div class="g-status" style="color:${color}">${meta.label.toUpperCase()}</div>
-      ${ttag}
-    </div>`;
-}
-
-const vibe = vibeState(now.avgW, now.avgS);
-const vibeHTML = `
-  <div class="card vibe-card">
-    <span class="vibe-emoji">${vibe.e}</span>
-    <div class="vibe-title">${vibe.title.toUpperCase()}</div>
-    <div class="vibe-desc">${vibe.desc}</div>
-    <div class="resp-pill">[ ${now.n} RESPONSE${now.n!==1?'S':''} THIS WEEK ]</div>
-  </div>`;
-
-document.getElementById('heroGrid').innerHTML =
-  gaugeHTML(now.avgW, COLOR_W, 'WORKLOAD', true) +
-  gaugeHTML(now.avgS, COLOR_S, 'SATISFACTION', false) +
-  vibeHTML;
-
-/* ── Alerts ── */
-const alertsEl = document.getElementById('alerts');
-const alertsList = [];
-const maxS = Math.max(...allS), minS = Math.min(...allS);
-
-if (now.avgW >= 8)
-  alertsList.push({type:'danger',icon:'🔥',title:'HEAVY WORKLOAD THIS WEEK',body:`Average is ${r1(now.avgW)}/10 — that is the burnout zone. Is there scope to cut back or redistribute?`});
-else if (now.avgW >= 6.5)
-  alertsList.push({type:'warn',icon:'📦',title:'LOAD IS ABOVE THE SWEET SPOT',body:`At ${r1(now.avgW)}/10, the team is stretched. Ideal is around 5 — productive, but with room to breathe.`});
-else if (now.avgW >= 4.5 && now.avgW <= 5.5)
-  alertsList.push({type:'good',icon:'✨',title:'WORKLOAD IS RIGHT IN THE SWEET SPOT',body:`${r1(now.avgW)}/10 — enough work to stay sharp, with room to grow. Nice.`});
-else if (now.avgW <= 3)
-  alertsList.push({type:'info',icon:'🥱',title:'VERY LIGHT WEEK',body:`At ${r1(now.avgW)}/10, the team has a lot of free capacity. Good time to tackle design debt, learning, or propose new initiatives.`});
-else if (now.avgW <= 4)
-  alertsList.push({type:'info',icon:'🌱',title:'LIGHTER THAN IDEAL',body:`At ${r1(now.avgW)}/10, there is room for more. Consider pulling in new work or investing in professional growth.`});
-
-if (now.avgS <= 4)
-  alertsList.push({type:'danger',icon:'💔',title:'SATISFACTION IS REALLY LOW',body:`At ${r1(now.avgS)}/10, the team is in the unhappy zone. This deserves an open conversation.`});
-else if (now.avgS <= 5.5)
-  alertsList.push({type:'warn',icon:'😕',title:'SATISFACTION BELOW MIDPOINT',body:`${r1(now.avgS)}/10 is in the "just a job" range. What would make a meaningful difference?`});
-else if (now.avgS >= 8)
-  alertsList.push({type:'good',icon:'🌟',title:'THE TEAM IS ABSOLUTELY LOVING IT',body:`${r1(now.avgS)}/10 — that is the "bragging to friends" zone. Amazing!`});
-else if (now.avgS >= 7)
-  alertsList.push({type:'good',icon:'😊',title:'GREAT SATISFACTION SCORES THIS WEEK',body:`At ${r1(now.avgS)}/10, the team is genuinely enjoying their work. Keep it up!`});
-
-if (weeks.length >= 3) {
-  const l3 = weeks.slice(-3);
-  if (l3[1].avgS < l3[0].avgS && l3[2].avgS < l3[1].avgS)
-    alertsList.push({type:'warn',icon:'📉',title:'3 WEEKS OF DECLINING SATISFACTION',body:'The trend is consistently moving down. What changed three weeks ago?'});
-}
-if (now.avgS === minS && weeks.length > 4)
-  alertsList.push({type:'danger',icon:'🏴',title:'ALL-TIME LOW SATISFACTION',body:`${r1(now.avgS)}/10 is the lowest satisfaction average since tracking began.`});
-if (now.avgS === maxS && weeks.length > 4)
-  alertsList.push({type:'good',icon:'🏆',title:'ALL-TIME RECORD SATISFACTION',body:`${r1(now.avgS)}/10 — the best satisfaction score ever recorded.`});
-if (now.n === 1)
-  alertsList.push({type:'info',icon:'👋',title:'ONLY 1 RESPONSE THIS WEEK',body:'Averages are less reliable with a single response. Remind the team to fill in the pulse check!'});
-
-alertsEl.innerHTML = alertsList.map(a=>`
-  <div class="alert alert-${a.type}">
-    <span class="a-icon">${a.icon}</span>
-    <div class="a-body"><strong>${a.title}</strong>${a.body}</div>
-  </div>`).join('');
-
-/* ── Chart ── */
-const chartLabels = weeks.map(w => fmtDate(w.date));
-const dataW = weeks.map(w => w.avgW);
-const dataS = weeks.map(w => w.avgS);
-const ctx = document.getElementById('mainChart').getContext('2d');
-new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: chartLabels,
-    datasets: [
-      { label:'WORKLOAD',     data:dataW, borderColor:COLOR_W, backgroundColor:'transparent',
-        borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:COLOR_W,
-        pointStyle:'rect', tension:0 },
-      { label:'SATISFACTION', data:dataS, borderColor:COLOR_S, backgroundColor:'transparent',
-        borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:COLOR_S,
-        pointStyle:'rect', tension:0 }
-    ]
-  },
-  options: {
-    responsive:true, maintainAspectRatio:false,
-    interaction:{ mode:'index', intersect:false },
-    plugins: {
-      legend: { labels:{ color:'#aaa', usePointStyle:true, padding:20,
-        font:{ family:"'Space Mono', monospace", size:12 } } },
-      tooltip: {
-        backgroundColor:'#111', borderColor:'#222', borderWidth:1, padding:10,
-        titleColor:'#00ff41', bodyColor:'#aaa',
-        bodyFont:{ family:"'Space Mono', monospace", size:11 },
-        titleFont:{ family:"'Space Mono', monospace", size:11 },
-        callbacks:{ label: c => ` ${c.dataset.label}: ${r1(c.raw)}/10` }
+    let ttag = '';
+    if (diff !== null) {
+      const abs = r1(Math.abs(diff));
+      if (Math.abs(diff) < 0.05) {
+        ttag = `<div class="ttag ttag-neutral">━ NO CHANGE</div>`;
+      } else {
+        const up = diff > 0;
+        const good = isWorkload ? !up : up;
+        const arrow = up ? '▲' : '▼';
+        const sign = up ? '+' : '';
+        ttag = `<div class="ttag ${good?'ttag-good':'ttag-bad'}">${arrow} ${sign}${abs} VS PREV</div>`;
       }
-    },
-    scales: {
-      x:{ ticks:{ color:'#777777', maxTicksLimit:10, font:{ family:"'Space Mono',monospace", size:11 } }, grid:{ color:'#1e1e1e' } },
-      y:{ min:1, max:10, ticks:{ color:'#777777', stepSize:2, font:{ family:"'Space Mono',monospace", size:11 } }, grid:{ color:'#1e1e1e' } }
     }
-  }
-});
 
-/* ── All-time stats ── */
-const totalResponses = raw.length;
-const allTimeW = r1(raw.reduce((a,r)=>a+r.w,0)/raw.length);
-const allTimeS = r1(raw.reduce((a,r)=>a+r.s,0)/raw.length);
-const bestSWeek = weeks.reduce((a,b)=>b.avgS>a.avgS?b:a);
-document.getElementById('statsGrid').innerHTML = [
-  { val:allTimeW, color:COLOR_W, lbl:'⚖️ AVG WORKLOAD<br>ALL TIME' },
-  { val:allTimeS, color:COLOR_S, lbl:'💙 AVG SATISFACTION<br>ALL TIME' },
-  { val:`${r1(bestSWeek.avgS)}<span style="font-size:1.1rem;color:#999"> ON ${fmtDate(bestSWeek.date).toUpperCase()}</span>`, color:'#00ff41', lbl:'🌟 PEAK SATISFACTION<br>WEEK' },
-  { val:totalResponses, color:'#aaa', lbl:'📊 TOTAL PULSE<br>RESPONSES' },
-].map(s=>`
-  <div class="stat">
-    <div class="stat-val" style="color:${s.color}">${s.val}</div>
-    <div class="stat-lbl">${s.lbl}</div>
-  </div>`).join('');
+    return `
+      <div class="card gauge-card">
+        <div class="g-label">${label}</div>
+        <div class="g-num" style="color:${color}">
+          <span class="count-up" data-target="${value}">0.0</span>
+        </div>
+        <div class="g-denom">/ 10</div>
+        <div class="g-bar-row">
+          <span class="g-bracket">[</span><span class="g-bar" style="color:${color}" data-filled="${filled}" data-total="${BAR_W}">${'░'.repeat(BAR_W)}</span><span class="g-bracket">]</span>
+        </div>
+        <div class="g-emoji">${meta.e}</div>
+        <div class="g-status" style="color:${color}">${meta.label.toUpperCase()}</div>
+        ${ttag}
+      </div>`;
+  }
+
+  const vibe = vibeState(now.avgW, now.avgS);
+  document.getElementById('heroGrid').innerHTML =
+    gaugeHTML(now.avgW, COLOR_W, 'WORKLOAD', true) +
+    gaugeHTML(now.avgS, COLOR_S, 'SATISFACTION', false) +
+    `<div class="card vibe-card">
+      <span class="vibe-emoji">${vibe.e}</span>
+      <div class="vibe-title">${vibe.title.toUpperCase()}</div>
+      <div class="vibe-desc">${vibe.desc}</div>
+      <div class="resp-pill">[ ${now.n} RESPONSE${now.n!==1?'S':''} THIS WEEK ]</div>
+    </div>`;
+
+  /* ── Alerts ── */
+  const alertsList = [];
+  const maxS = Math.max(...allS), minS = Math.min(...allS);
+
+  if (now.avgW >= 8)
+    alertsList.push({type:'danger',icon:'🔥',title:'HEAVY WORKLOAD THIS WEEK',body:`Average is ${r1(now.avgW)}/10 — that is the burnout zone. Is there scope to cut back or redistribute?`});
+  else if (now.avgW >= 6.5)
+    alertsList.push({type:'warn',icon:'📦',title:'LOAD IS ABOVE THE SWEET SPOT',body:`At ${r1(now.avgW)}/10, the team is stretched. Ideal is around 5 — productive, but with room to breathe.`});
+  else if (now.avgW >= 4.5 && now.avgW <= 5.5)
+    alertsList.push({type:'good',icon:'✨',title:'WORKLOAD IS RIGHT IN THE SWEET SPOT',body:`${r1(now.avgW)}/10 — enough work to stay sharp, with room to grow. Nice.`});
+  else if (now.avgW <= 3)
+    alertsList.push({type:'info',icon:'🥱',title:'VERY LIGHT WEEK',body:`At ${r1(now.avgW)}/10, the team has a lot of free capacity. Good time to tackle design debt, learning, or propose new initiatives.`});
+  else if (now.avgW <= 4)
+    alertsList.push({type:'info',icon:'🌱',title:'LIGHTER THAN IDEAL',body:`At ${r1(now.avgW)}/10, there is room for more. Consider pulling in new work or investing in professional growth.`});
+
+  if (now.avgS <= 4)
+    alertsList.push({type:'danger',icon:'💔',title:'SATISFACTION IS REALLY LOW',body:`At ${r1(now.avgS)}/10, the team is in the unhappy zone. This deserves an open conversation.`});
+  else if (now.avgS <= 5.5)
+    alertsList.push({type:'warn',icon:'😕',title:'SATISFACTION BELOW MIDPOINT',body:`${r1(now.avgS)}/10 is in the "just a job" range. What would make a meaningful difference?`});
+  else if (now.avgS >= 8)
+    alertsList.push({type:'good',icon:'🌟',title:'THE TEAM IS ABSOLUTELY LOVING IT',body:`${r1(now.avgS)}/10 — that is the "bragging to friends" zone. Amazing!`});
+  else if (now.avgS >= 7)
+    alertsList.push({type:'good',icon:'😊',title:'GREAT SATISFACTION SCORES THIS WEEK',body:`At ${r1(now.avgS)}/10, the team is genuinely enjoying their work. Keep it up!`});
+
+  if (weeks.length >= 3) {
+    const l3 = weeks.slice(-3);
+    if (l3[1].avgS < l3[0].avgS && l3[2].avgS < l3[1].avgS)
+      alertsList.push({type:'warn',icon:'📉',title:'3 WEEKS OF DECLINING SATISFACTION',body:'The trend is consistently moving down. What changed three weeks ago?'});
+  }
+  if (now.avgS === minS && weeks.length > 4)
+    alertsList.push({type:'danger',icon:'🏴',title:'ALL-TIME LOW SATISFACTION',body:`${r1(now.avgS)}/10 is the lowest satisfaction average since tracking began.`});
+  if (now.avgS === maxS && weeks.length > 4)
+    alertsList.push({type:'good',icon:'🏆',title:'ALL-TIME RECORD SATISFACTION',body:`${r1(now.avgS)}/10 — the best satisfaction score ever recorded.`});
+  if (now.n === 1)
+    alertsList.push({type:'info',icon:'👋',title:'ONLY 1 RESPONSE THIS WEEK',body:'Averages are less reliable with a single response. Remind the team to fill in the pulse check!'});
+
+  document.getElementById('alerts').innerHTML = alertsList.map(a=>`
+    <div class="alert alert-${a.type}">
+      <span class="a-icon">${a.icon}</span>
+      <div class="a-body"><strong>${a.title}</strong>${a.body}</div>
+    </div>`).join('');
+
+  /* ── Chart ── */
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: weeks.map(w => fmtDate(w.date)),
+      datasets: [
+        { label:'WORKLOAD',     data:weeks.map(w=>w.avgW), borderColor:COLOR_W, backgroundColor:'transparent',
+          borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:COLOR_W,
+          pointStyle:'rect', tension:0 },
+        { label:'SATISFACTION', data:weeks.map(w=>w.avgS), borderColor:COLOR_S, backgroundColor:'transparent',
+          borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:COLOR_S,
+          pointStyle:'rect', tension:0 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins: {
+        legend: { labels:{ color:'#aaa', usePointStyle:true, padding:20,
+          font:{ family:"'Space Mono', monospace", size:12 } } },
+        tooltip: {
+          backgroundColor:'#111', borderColor:'#222', borderWidth:1, padding:10,
+          titleColor:'#00ff41', bodyColor:'#aaa',
+          bodyFont:{ family:"'Space Mono', monospace", size:11 },
+          titleFont:{ family:"'Space Mono', monospace", size:11 },
+          callbacks:{ label: c => ` ${c.dataset.label}: ${r1(c.raw)}/10` }
+        }
+      },
+      scales: {
+        x:{ ticks:{ color:'#777777', maxTicksLimit:10, font:{ family:"'Space Mono',monospace", size:11 } }, grid:{ color:'#1e1e1e' } },
+        y:{ min:1, max:10, ticks:{ color:'#777777', stepSize:2, font:{ family:"'Space Mono',monospace", size:11 } }, grid:{ color:'#1e1e1e' } }
+      }
+    }
+  });
+
+  /* ── All-time stats ── */
+  const totalN  = weeks.reduce((a,w)=>a+w.n,0);
+  const allTimeW = r1(weeks.reduce((a,w)=>a+w.avgW*w.n,0)/totalN);
+  const allTimeS = r1(weeks.reduce((a,w)=>a+w.avgS*w.n,0)/totalN);
+  const bestSWeek = weeks.reduce((a,b)=>b.avgS>a.avgS?b:a);
+  document.getElementById('statsGrid').innerHTML = [
+    { val:allTimeW, color:COLOR_W, lbl:'⚖️ AVG WORKLOAD<br>ALL TIME' },
+    { val:allTimeS, color:COLOR_S, lbl:'💙 AVG SATISFACTION<br>ALL TIME' },
+    { val:`${r1(bestSWeek.avgS)}<span style="font-size:1.1rem;color:#999"> ON ${fmtDate(bestSWeek.date).toUpperCase()}</span>`, color:'#00ff41', lbl:'🌟 PEAK SATISFACTION<br>WEEK' },
+    { val:totalN, color:'#aaa', lbl:'📊 TOTAL PULSE<br>RESPONSES' },
+  ].map(s=>`
+    <div class="stat">
+      <div class="stat-val" style="color:${s.color}">${s.val}</div>
+      <div class="stat-lbl">${s.lbl}</div>
+    </div>`).join('');
+}
 
 /* ── Animations ── */
 function animateBars() {
@@ -815,38 +766,55 @@ function typewriter(el, text, speed) {
 
 /* ── Boot sequence ── */
 async function runBoot() {
-  const log = document.getElementById('bootLog');
+  const log    = document.getElementById('bootLog');
   const bootEl = document.getElementById('boot');
   const mainEl = document.getElementById('main');
-
-  const lines = [
-    { t:'> DESIGN_TEAM_HEALTH_MONITOR v2.0', d:160 },
-    { t:'> ─────────────────────────────────────────', d:80 },
-    { t:'> INITIALIZING SYSTEM...', d:180 },
-    { t:`> LOADING ${raw.length} DATA POINTS.............. OK`, d:220 },
-    { t:`> COMPUTING ${weeks.length} WEEKLY AVERAGES......... OK`, d:220 },
-    { t:'> RUNNING TREND ANALYSIS.............. OK', d:200 },
-    { t:`> LATEST ENTRY: ${fmtDate(now.date).toUpperCase()}`, d:150 },
-    { t:`> WORKLOAD THIS WEEK: ${r1(now.avgW)}/10 ${workloadEmoji(now.avgW).e}`, d:150 },
-    { t:`> SATISFACTION THIS WEEK: ${r1(now.avgS)}/10 ${satisfactionEmoji(now.avgS).e}`, d:150 },
-    { t:'> ─────────────────────────────────────────', d:80 },
-    { t:'> RENDERING DASHBOARD...', d:300 },
-    { t:'', d:100 },
-    { t:'> READY.', d:400 },
-  ];
 
   const cursor = document.createElement('span');
   cursor.className = 'cursor';
   log.appendChild(cursor);
 
-  for (const line of lines) {
+  async function appendLine(text, delay) {
     const ln = document.createElement('span');
     ln.className = 'ln';
-    ln.textContent = line.t;
+    ln.textContent = text;
     log.insertBefore(ln, cursor);
-    await new Promise(r => setTimeout(r, line.d));
+    await new Promise(r => setTimeout(r, delay));
+    return ln;
   }
 
+  await appendLine('> DESIGN_TEAM_HEALTH_MONITOR v2.0', 160);
+  await appendLine('> ─────────────────────────────────────────', 80);
+  await appendLine('> INITIALIZING SYSTEM...', 180);
+
+  const fetchLn = await appendLine('> FETCHING LIVE DATA...', 120);
+
+  let weeks;
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    weeks = await res.json();
+    fetchLn.textContent = '> FETCHING LIVE DATA.............. OK';
+  } catch (err) {
+    fetchLn.textContent = '> FETCHING LIVE DATA.............. FAIL';
+    await appendLine(`> ERROR: ${err.message}`, 120);
+    await appendLine('> CHECK APPS SCRIPT DEPLOYMENT AND RETRY.', 300);
+    return;
+  }
+
+  await appendLine(`> LOADED ${weeks.length} WEEKLY AVERAGES........... OK`, 220);
+  await appendLine('> RUNNING TREND ANALYSIS.............. OK', 200);
+
+  const now = weeks[weeks.length-1];
+  await appendLine(`> LATEST ENTRY: ${fmtDate(now.date).toUpperCase()}`, 150);
+  await appendLine(`> WORKLOAD THIS WEEK: ${r1(now.avgW)}/10 ${workloadEmoji(now.avgW).e}`, 150);
+  await appendLine(`> SATISFACTION THIS WEEK: ${r1(now.avgS)}/10 ${satisfactionEmoji(now.avgS).e}`, 150);
+  await appendLine('> ─────────────────────────────────────────', 80);
+  await appendLine('> RENDERING DASHBOARD...', 300);
+  await appendLine('', 100);
+  await appendLine('> READY.', 400);
+
+  render(weeks);
   await new Promise(r => setTimeout(r, 300));
   bootEl.classList.add('hide');
   mainEl.classList.remove('hide');
