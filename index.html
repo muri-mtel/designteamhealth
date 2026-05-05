@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design Team Health</title>
+  <title>DESIGN TEAM HEALTH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0d1117;
-      --card: #161b22;
-      --card-alt: #1c2333;
-      --border: #30363d;
-      --orange: #f97316;
-      --orange-dim: rgba(249,115,22,0.15);
-      --blue: #38bdf8;
-      --blue-dim: rgba(56,189,248,0.12);
-      --green: #22c55e;
-      --green-dim: rgba(34,197,94,0.12);
-      --yellow: #f59e0b;
-      --yellow-dim: rgba(245,158,11,0.12);
-      --red: #ef4444;
-      --red-dim: rgba(239,68,68,0.12);
-      --text: #e6edf3;
-      --muted: #7d8590;
-      --muted2: #484f58;
+      --bg:      #0c0c0c;
+      --card:    #111111;
+      --border:  #222222;
+      --green:   #00ff41;
+      --orange:  #ff8c00;
+      --cyan:    #00d4ff;
+      --red:     #ff3333;
+      --yellow:  #ffcc00;
+      --text:    #cccccc;
+      --muted:   #aaaaaa;
+      --dim:     #1e1e1e;
+      --mono:    'Space Mono', 'Courier New', monospace;
+      --display: 'VT323', 'Courier New', monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,274 +29,359 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: var(--mono);
+      font-size: 16px;
       min-height: 100vh;
-      padding: 2.5rem 1.25rem 5rem;
-      background-image: radial-gradient(ellipse at 20% 0%, rgba(56,189,248,0.05) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 0%, rgba(249,115,22,0.05) 0%, transparent 50%);
+      padding: 2rem 1.25rem 5rem;
+      overflow-x: hidden;
     }
 
+    /* ── Scanlines ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px
+      );
+      pointer-events: none; z-index: 9999;
+    }
+    .scanline {
+      position: fixed; left: 0; right: 0; height: 4px;
+      background: linear-gradient(transparent, rgba(0,255,65,0.05), transparent);
+      animation: scan 9s linear infinite;
+      pointer-events: none; z-index: 9998;
+    }
+    @keyframes scan { 0% { top: -4px; } 100% { top: 100vh; } }
+
+    /* ── Screen flicker ── */
+    @keyframes flicker {
+      0%,89%,91%,93%,100% { opacity:1; }
+      90% { opacity:.92; }
+      92% { opacity:.97; }
+    }
+    .wrap { animation: flicker 15s infinite; }
+
+    /* ── Boot overlay ── */
+    .boot {
+      position: fixed; inset: 0; background: var(--bg);
+      z-index: 8000;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .5s;
+    }
+    .boot.hide { opacity: 0; pointer-events: none; }
+    .boot-log {
+      font-family: var(--display);
+      font-size: 1.25rem; color: var(--green);
+      width: min(620px, 90vw); line-height: 2;
+    }
+    .boot-log .ln { display: block; }
+    .cursor {
+      display: inline-block; width: .6em; height: 1.1em;
+      background: var(--green); vertical-align: text-bottom;
+      animation: blink .7s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Layout ── */
     .wrap { max-width: 1080px; margin: 0 auto; }
+    .main { transition: opacity .4s; }
+    .main.hide { opacity: 0; pointer-events: none; }
 
     /* ── Header ── */
-    .header { text-align: center; margin-bottom: 3rem; }
+    .header {
+      text-align: center; margin-bottom: 2.5rem;
+      padding: 1.75rem 1.5rem;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--green);
+      background: var(--card);
+    }
     .header h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      background: linear-gradient(135deg, var(--orange) 0%, var(--blue) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.6rem;
+      font-family: var(--display);
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      color: var(--green); letter-spacing: .12em;
+      text-transform: uppercase; font-weight: 400;
+      margin-bottom: .5rem;
+      min-height: 1.2em;
     }
     .header-sub {
-      color: var(--muted);
-      font-size: 0.875rem;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      color: var(--muted); font-size: .9rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center; gap: .75rem;
     }
-    .live-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--green);
-      display: inline-block;
-      animation: pulse-dot 2s ease-in-out infinite;
+    .live-sq {
+      width: 8px; height: 8px;
+      background: var(--green); display: inline-block;
+      animation: blink 1s step-end infinite;
     }
-    @keyframes pulse-dot {
-      0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
-      50% { opacity:0.7; box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+
+    /* ── Scale legend ── */
+    .scale-legend {
+      display: flex; gap: 1rem; justify-content: center;
+      flex-wrap: wrap; margin-top: 1.25rem;
     }
+    .scale-item {
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--green);
+      padding: .5rem .9rem; background: var(--bg);
+    }
+    .scale-lbl {
+      display: block; font-weight: 700; color: var(--green);
+      text-transform: uppercase; letter-spacing: .1em;
+      font-size: .85rem; margin-bottom: .3rem;
+    }
+    .scale-row { display: flex; gap: .9rem; color: var(--muted); font-size: .9rem; flex-wrap: wrap; }
+    .scale-row span { white-space: nowrap; }
 
     /* ── Section labels ── */
-    .section-label {
-      display: flex; align-items: center; gap: 0.75rem;
-      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em;
-      color: var(--muted); font-weight: 600;
-      margin: 2rem 0 1rem;
+    .sec {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: var(--display); font-size: 1.1rem;
+      color: var(--green); text-transform: uppercase;
+      letter-spacing: .15em; margin: 2rem 0 0;
     }
-    .section-label::after {
-      content: ''; flex: 1; height: 1px; background: var(--border);
-    }
+    .sec::before { content: '══ '; }
+    .sec::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-    /* ── Cards ── */
+    /* ── Generic card ── */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
+      border-radius: 0;
+      padding: 1.25rem;
     }
+    .card:hover { border-color: rgba(0,255,65,.25); }
 
-    /* ── Hero grid: 3 cols ── */
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1.25rem;
-      margin-bottom: 1.25rem;
+    /* ── Hero grid ── */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--green);
+      margin-top: 1rem; margin-bottom: 1rem;
     }
+    .hero .card {
+      border: none; border-right: 1px solid var(--border);
+      border-radius: 0; padding: 1.5rem 1rem; background: var(--card);
+    }
+    .hero .card:last-child { border-right: none; }
     @media (max-width: 700px) {
-      .hero-grid { grid-template-columns: 1fr 1fr; }
-      .hero-grid .vibe-card { grid-column: 1 / -1; }
+      .hero { grid-template-columns: 1fr 1fr; }
+      .hero .vibe-card { grid-column: 1/-1; border-top: 1px solid var(--border); border-right: none; }
     }
     @media (max-width: 460px) {
-      .hero-grid { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero .card { border-right: none; border-bottom: 1px solid var(--border); }
     }
 
     /* ── Gauge card ── */
     .gauge-card {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 2rem 1.25rem 1.5rem; text-align: center;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
     }
-    .gauge-label {
-      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--muted); margin-bottom: 1.25rem; font-weight: 600;
+    .g-label {
+      font-size: .85rem; text-transform: uppercase; letter-spacing: .15em;
+      color: var(--muted); font-weight: 700; margin-bottom: .85rem;
     }
-    .gauge-wrap { position: relative; width: 140px; height: 140px; margin-bottom: 1rem; }
-    .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .gauge-track { fill: none; stroke: var(--border); stroke-width: 9; }
-    .gauge-arc {
-      fill: none; stroke-width: 9; stroke-linecap: round;
-      transition: stroke-dashoffset 1.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+    .g-num {
+      font-family: var(--display); font-size: 4.5rem; line-height: 1;
     }
-    .gauge-center {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center; line-height: 1;
+    .g-denom { font-size: .85rem; color: var(--muted); margin-bottom: .75rem; }
+    .g-bar-row {
+      font-family: var(--display); font-size: 1.15rem;
+      white-space: nowrap; margin-bottom: .75rem; letter-spacing: 0;
     }
-    .gauge-num {
-      font-size: 2.6rem; font-weight: 800; line-height: 1;
+    .g-bracket { color: var(--muted); }
+    .g-emoji { font-size: 1.3rem; margin-bottom: .3rem; }
+    .g-status {
+      font-size: .85rem; text-transform: uppercase;
+      letter-spacing: .1em; font-weight: 700; margin-bottom: .5rem;
     }
-    .gauge-denom { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
-    .gauge-emoji { font-size: 1.4rem; margin-bottom: 0.35rem; }
-    .gauge-status { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
-    .trend-tag {
-      display: inline-flex; align-items: center; gap: 0.2rem;
-      font-size: 0.72rem; font-weight: 700;
-      padding: 0.2rem 0.55rem; border-radius: 20px;
+    .ttag {
+      font-family: var(--display); font-size: .9rem;
+      padding: .1rem .45rem; border: 1px solid;
+      letter-spacing: .05em;
     }
-    .tag-up-bad   { background: rgba(239,68,68,0.15);   color: #fca5a5; }
-    .tag-down-bad { background: rgba(239,68,68,0.15);   color: #fca5a5; }
-    .tag-up-good  { background: rgba(34,197,94,0.15);   color: #86efac; }
-    .tag-down-good{ background: rgba(34,197,94,0.15);   color: #86efac; }
-    .tag-neutral  { background: rgba(125,133,144,0.12); color: var(--muted); }
+    .ttag-good   { border-color: rgba(0,255,65,.4);  color: var(--green);  background: rgba(0,255,65,.04); }
+    .ttag-bad    { border-color: rgba(255,51,51,.4); color: var(--red);    background: rgba(255,51,51,.04); }
+    .ttag-neutral{ border-color: var(--border);      color: var(--muted); }
 
     /* ── Vibe card ── */
     .vibe-card {
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 2rem 1.5rem; text-align: center; gap: 0;
+      align-items: center; justify-content: center; text-align: center;
     }
     .vibe-emoji {
-      font-size: 4.5rem; line-height: 1;
-      margin-bottom: 0.75rem;
-      display: block;
-      animation: float 3.5s ease-in-out infinite;
+      font-size: 4.2rem; line-height: 1; margin-bottom: .6rem;
+      display: block; animation: glitch 6s infinite;
     }
-    @keyframes float {
-      0%,100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+    @keyframes glitch {
+      0%,78%,100% { transform:none; filter:none; }
+      79% { transform:translate(-4px,0) skewX(-3deg); filter:hue-rotate(80deg); }
+      80% { transform:translate(4px,0)  skewX(3deg);  filter:hue-rotate(-80deg); }
+      81% { transform:translate(-2px,0); filter:none; }
+      82% { transform:none; }
     }
-    .vibe-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.4rem; }
-    .vibe-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.45; max-width: 200px; }
-    .responses-pill {
-      margin-top: 1rem;
-      display: inline-flex; align-items: center; gap: 0.3rem;
-      background: var(--blue-dim); border: 1px solid rgba(56,189,248,0.2);
-      color: var(--blue); border-radius: 20px;
-      padding: 0.25rem 0.7rem; font-size: 0.72rem; font-weight: 600;
+    .vibe-title {
+      font-family: var(--display); font-size: 1.55rem;
+      color: var(--green); text-transform: uppercase;
+      letter-spacing: .1em; margin-bottom: .35rem;
     }
+    .vibe-desc { font-size: .9rem; color: var(--muted); line-height: 1.55; max-width: 185px; }
+    .resp-pill {
+      font-family: var(--display); font-size: 1rem;
+      color: var(--cyan); letter-spacing: .05em; margin-top: .9rem;
+    }
+    .suggest-btn {
+      margin-top: .75rem; background: none;
+      border: 1px solid var(--border); color: var(--muted);
+      padding: .3rem .8rem; font-family: var(--mono); font-size: .85rem;
+      cursor: pointer; letter-spacing: .05em; text-transform: uppercase;
+      transition: border-color .15s, color .15s;
+    }
+    .suggest-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
     /* ── Alerts ── */
-    .alerts { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.25rem; }
+    .alerts { display: flex; flex-direction: column; margin-top: 1rem; margin-bottom: 1rem; }
     .alert {
-      display: flex; align-items: flex-start; gap: 0.75rem;
-      padding: 0.9rem 1.1rem; border-radius: 12px;
-      font-size: 0.85rem; line-height: 1.45;
-      animation: slide-in 0.4s ease both;
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: .7rem 1rem; border-left: 3px solid;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      font-size: .9rem; line-height: 1.55;
+      animation: slidein .3s ease both;
     }
-    @keyframes slide-in {
-      from { opacity: 0; transform: translateY(-8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .alert:first-child { border-top: 1px solid var(--border); }
+    @keyframes slidein {
+      from { opacity:0; transform:translateX(-10px); }
+      to   { opacity:1; transform:none; }
     }
-    .alert:nth-child(2) { animation-delay: 0.1s; }
-    .alert:nth-child(3) { animation-delay: 0.2s; }
-    .alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-    .alert-body strong { display: block; font-weight: 700; margin-bottom: 0.15rem; }
-    .alert-danger { background: var(--red-dim);    border: 1px solid rgba(239,68,68,0.25);    color: #fca5a5; }
-    .alert-warn   { background: var(--yellow-dim); border: 1px solid rgba(245,158,11,0.25);   color: #fcd34d; }
-    .alert-good   { background: var(--green-dim);  border: 1px solid rgba(34,197,94,0.25);    color: #86efac; }
-    .alert-info   { background: var(--blue-dim);   border: 1px solid rgba(56,189,248,0.2);    color: #7dd3fc; }
+    .alert:nth-child(2){animation-delay:.07s}
+    .alert:nth-child(3){animation-delay:.14s}
+    .alert:nth-child(4){animation-delay:.21s}
+    .a-icon { font-size: 1rem; flex-shrink: 0; }
+    .a-body strong {
+      display: block; font-size: .85rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: .1rem;
+    }
+    .alert-danger { border-color: var(--red);    color: #ff9999; }
+    .alert-warn   { border-color: var(--yellow); color: #ffe080; }
+    .alert-good   { border-color: var(--green);  color: #7effa8; }
+    .alert-info   { border-color: var(--cyan);   color: #7ee8ff; }
 
     /* ── Chart ── */
-    .chart-card { margin-bottom: 1.25rem; }
-    .chart-subtitle { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.25rem; }
-    .chart-box { position: relative; height: 260px; }
-
-    /* ── Stats grid ── */
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    .chart-wrap {
+      border: 1px solid var(--border); border-top: 2px solid var(--green);
+      background: var(--card); padding: 1.25rem; margin-top: 1rem; margin-bottom: 1rem;
     }
-    @media (max-width: 700px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
-    .stat { text-align: center; }
+    .chart-sub {
+      font-size: .85rem; color: var(--muted); margin-bottom: 1rem;
+      text-transform: uppercase; letter-spacing: .1em;
+    }
+    .chart-box { position: relative; height: 240px; }
+
+    /* ── Stats ── */
+    .stats-wrap {
+      border: 1px solid var(--border); border-top: 2px solid var(--green);
+      margin-top: 1rem;
+    }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); }
+    .stat {
+      text-align: center; padding: 1.25rem .75rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    @media (max-width:700px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(2){ border-right:none; }
+      .stat:nth-child(3){ border-top:1px solid var(--border); }
+      .stat:nth-child(4){ border-top:1px solid var(--border); border-right:none; }
+    }
     .stat-val {
-      font-size: 2rem; font-weight: 800; line-height: 1;
-      margin-bottom: 0.3rem;
+      font-family: var(--display); font-size: 2.8rem; line-height: 1;
+      margin-bottom: .3rem;
     }
-    .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.35; }
-
-    /* ── Scale legend ── */
-    .scale-legend {
-      display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
-      margin-top: 1.25rem;
+    .stat-lbl {
+      font-size: .85rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .09em; line-height: 1.5;
     }
-    .scale-item {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 0.6rem 1rem;
-      font-size: 0.75rem;
-    }
-    .scale-label {
-      display: block; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      font-size: 0.65rem; margin-bottom: 0.35rem;
-    }
-    .scale-row {
-      display: flex; gap: 1rem; color: var(--muted); flex-wrap: wrap;
-    }
-    .scale-row span { white-space: nowrap; }
-
-    /* ── Suggest button ── */
-    .suggest-btn {
-      margin-top: 0.9rem;
-      background: none; border: 1px solid var(--border);
-      color: var(--muted); border-radius: 20px;
-      padding: 0.4rem 1.1rem; font-size: 0.78rem;
-      cursor: pointer; transition: border-color 0.2s, color 0.2s;
-      font-family: inherit;
-    }
-    .suggest-btn:hover { border-color: var(--blue); color: var(--blue); }
 
     /* ── Modal ── */
     .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      position: fixed; inset: 0; background: rgba(0,0,0,.88);
       display: flex; align-items: center; justify-content: center;
       z-index: 200; opacity: 0; pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity .15s;
     }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
     .modal-box {
-      background: #1c2333; border: 1px solid var(--border);
-      border-radius: 20px; padding: 2rem; width: min(480px, 92vw);
-      transform: translateY(16px); transition: transform 0.25s;
+      background: var(--bg); border: 1px solid var(--green);
+      box-shadow: 5px 5px 0 var(--green);
+      padding: 1.75rem; width: min(480px,92vw);
+      transform: translate(-5px,-5px);
+      transition: transform .2s, box-shadow .2s;
     }
-    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-overlay.open .modal-box { transform: none; box-shadow: 0 0 0 var(--green); }
     .modal-head {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 0.4rem;
+      margin-bottom: .4rem;
     }
-    .modal-head h2 { font-size: 1.05rem; font-weight: 700; }
+    .modal-head h2 {
+      font-family: var(--display); font-size: 1.4rem;
+      color: var(--green); letter-spacing: .1em;
+    }
     .modal-close {
-      background: none; border: none; color: var(--muted);
-      font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0.2rem;
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); font-family: var(--mono); font-size: .9rem;
+      padding: .2rem .45rem; cursor: pointer;
+      transition: border-color .15s, color .15s;
     }
-    .modal-close:hover { color: var(--text); }
-    .modal-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 1.1rem; }
-    .modal-textarea {
+    .modal-close:hover { border-color: var(--red); color: var(--red); }
+    .modal-sub { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; letter-spacing: .04em; }
+    .modal-ta {
       width: 100%; background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; color: var(--text); font-family: inherit;
-      font-size: 0.9rem; padding: 0.85rem 1rem; resize: vertical;
-      min-height: 100px; outline: none; transition: border-color 0.2s;
+      color: var(--text); font-family: var(--mono); font-size: .82rem;
+      padding: .75rem 1rem; resize: vertical; min-height: 90px;
+      outline: none; transition: border-color .15s;
     }
-    .modal-textarea:focus { border-color: var(--blue); }
-    .modal-textarea::placeholder { color: var(--muted2); }
-    .modal-footer {
-      display: flex; justify-content: flex-end; margin-top: 1rem;
-    }
+    .modal-ta:focus { border-color: var(--green); }
+    .modal-ta::placeholder { color: #777777; }
+    .modal-footer { display: flex; justify-content: flex-end; margin-top: .85rem; }
     .modal-send {
-      background: var(--blue); color: #0d1117;
-      border: none; border-radius: 10px;
-      padding: 0.6rem 1.4rem; font-size: 0.88rem; font-weight: 700;
-      cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+      background: var(--green); color: #000; border: none;
+      padding: .55rem 1.25rem; font-family: var(--mono); font-size: .75rem;
+      font-weight: 700; cursor: pointer; letter-spacing: .1em; text-transform: uppercase;
+      transition: opacity .15s;
     }
-    .modal-send:hover { opacity: 0.85; }
-    .modal-send:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-send:hover { opacity: .85; }
+    .modal-send:disabled { opacity: .35; cursor: not-allowed; }
 
+    /* ── Footer ── */
     footer {
-      text-align: center; color: var(--muted2);
-      font-size: 0.75rem; margin-top: 4rem;
+      text-align: center; color: var(--muted);
+      font-size: .85rem; margin-top: 3rem; letter-spacing: .1em;
+      text-transform: uppercase;
     }
-    footer span { color: var(--muted); }
   </style>
 </head>
 <body>
+
+<div class="scanline"></div>
+
+<!-- Boot sequence -->
+<div class="boot" id="boot">
+  <div class="boot-log" id="bootLog"></div>
+</div>
+
 <div class="wrap">
+<div class="main hide" id="main">
 
   <header class="header">
-    <h1>Design Team Health</h1>
+    <h1 id="mainTitle">&nbsp;</h1>
     <p class="header-sub">
-      <span class="live-dot"></span>
-      Weekly pulse · Anonymous averages only · Updated <span id="lastDate"></span>
+      <span class="live-sq"></span>
+      LIVE &nbsp;|&nbsp; ANONYMOUS AVERAGES ONLY &nbsp;|&nbsp; UPDATED <span id="lastDate"></span>
     </p>
     <div class="scale-legend">
       <div class="scale-item">
-        <span class="scale-label">⚖️ Workload</span>
+        <span class="scale-lbl">⚖️ WORKLOAD</span>
         <div class="scale-row">
           <span>🥱 0 — nothing to do</span>
           <span>✨ 5 — ideal balance</span>
@@ -306,7 +389,7 @@
         </div>
       </div>
       <div class="scale-item">
-        <span class="scale-label">💙 Satisfaction</span>
+        <span class="scale-lbl">💙 SATISFACTION</span>
         <div class="scale-row">
           <span>💔 0 — planning to quit</span>
           <span>😐 5 — just a job</span>
@@ -316,43 +399,45 @@
     </div>
   </header>
 
-  <div class="section-label"><span class="live-dot"></span> This Week</div>
-  <div class="hero-grid" id="heroGrid"></div>
+  <div class="sec">THIS WEEK</div>
+  <div class="hero" id="heroGrid"></div>
 
+  <div class="sec">SIGNALS</div>
   <div class="alerts" id="alerts"></div>
 
-  <div class="section-label">📈 Trend Over Time</div>
-  <div class="card chart-card">
-    <div class="chart-subtitle">Weekly team averages — workload & satisfaction on a 1–10 scale</div>
+  <div class="sec">TREND OVER TIME</div>
+  <div class="chart-wrap">
+    <div class="chart-sub">WEEKLY AVERAGES — WORKLOAD &amp; SATISFACTION — SCALE 1–10</div>
     <div class="chart-box"><canvas id="mainChart"></canvas></div>
   </div>
 
-  <div class="section-label">🏆 All-Time</div>
-  <div class="card">
+  <div class="sec">ALL-TIME</div>
+  <div class="stats-wrap">
     <div class="stats-grid" id="statsGrid"></div>
   </div>
 
 </div>
+</div>
+
+<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
     <div class="modal-head">
-      <h2>💡 Anonymous suggestion</h2>
-      <button class="modal-close" id="modalClose">✕</button>
+      <h2>// ANONYMOUS SUGGESTION</h2>
+      <button class="modal-close" id="modalClose">[ESC]</button>
     </div>
-    <p class="modal-sub">Your name is never attached to this. The team lead sees all suggestions.</p>
-    <textarea class="modal-textarea" id="suggestionText" placeholder="What's on your mind?"></textarea>
+    <p class="modal-sub">Your name is never attached. The team lead sees all suggestions.</p>
+    <textarea class="modal-ta" id="suggestionText" placeholder="> type your suggestion..."></textarea>
     <div class="modal-footer">
-      <button class="modal-send" id="modalSend">Send →</button>
+      <button class="modal-send" id="modalSend">SEND →</button>
     </div>
   </div>
 </div>
 
-<footer>
-  <span>No individual scores are shown.</span> Only anonymised team averages. 💙
-</footer>
+<footer>No individual scores shown — only anonymous team averages</footer>
 
 <script>
-/* ── Raw data (no names, just date + scores) ── */
+/* ── Data ── */
 const raw = [
   {d:"2025-10-03",w:8,s:7},
   {d:"2025-10-06",w:6,s:7},{d:"2025-10-06",w:6,s:7},{d:"2025-10-06",w:5,s:6},
@@ -388,117 +473,102 @@ const raw = [
   {d:"2026-05-01",w:5,s:5},
 ];
 
-/* ── Group by week date, compute averages ── */
+/* ── Group + average by week ── */
 const byDate = {};
-raw.forEach(r => {
-  if (!byDate[r.d]) byDate[r.d] = [];
-  byDate[r.d].push(r);
-});
-
+raw.forEach(r => { (byDate[r.d] = byDate[r.d] || []).push(r); });
 const weeks = Object.keys(byDate).sort().map(d => {
-  const entries = byDate[d];
-  const n = entries.length;
-  const avgW = entries.reduce((a,e) => a + e.w, 0) / n;
-  const avgS = entries.reduce((a,e) => a + e.s, 0) / n;
-  return { date: d, avgW: +avgW.toFixed(2), avgS: +avgS.toFixed(2), n };
+  const e = byDate[d], n = e.length;
+  return { date:d, avgW:+(e.reduce((a,x)=>a+x.w,0)/n).toFixed(2), avgS:+(e.reduce((a,x)=>a+x.s,0)/n).toFixed(2), n };
 });
+const now  = weeks[weeks.length-1];
+const prev = weeks[weeks.length-2];
+const allW = weeks.map(w=>w.avgW);
+const allS = weeks.map(w=>w.avgS);
 
-const now    = weeks[weeks.length - 1];
-const prev   = weeks[weeks.length - 2];
-const allW   = weeks.map(w => w.avgW);
-const allS   = weeks.map(w => w.avgS);
-
-/* ── Format helpers ── */
+/* ── Helpers ── */
 function fmtDate(d) {
-  return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 }
-function r1(n) { return Math.round(n * 10) / 10; }
+function r1(n){ return Math.round(n*10)/10; }
 
-/* ── Gauge config ── */
-const CIRC = +(2 * Math.PI * 57).toFixed(2); // r=57 in a 130x130 viewBox
-const COLOR_W = '#f97316';
-const COLOR_S = '#38bdf8';
+const COLOR_W = '#ff8c00';
+const COLOR_S = '#00d4ff';
 
-// Workload: 5 = ideal. Both too low AND too high are problems.
+/* ── Scale-aware emoji labels ── */
+// Workload: 5 = ideal. Both extremes are problems.
 function workloadEmoji(v) {
-  if (v <= 1.5) return { e: '🥱', label: 'Nothing to do' };
-  if (v <= 3)   return { e: '😴', label: 'Very light' };
-  if (v <= 4.4) return { e: '🌱', label: 'Under capacity' };
-  if (v <= 5.5) return { e: '✨', label: 'Perfect balance' };
-  if (v <= 6.5) return { e: '📦', label: 'Getting full' };
-  if (v <= 7.5) return { e: '🏃', label: 'Running hot' };
-  if (v <= 8.5) return { e: '🔥', label: 'Too much' };
-  return { e: '🚨', label: 'Burnout risk' };
+  if (v <= 1.5) return { e:'🥱', label:'Nothing to do' };
+  if (v <= 3)   return { e:'😴', label:'Very light' };
+  if (v <= 4.4) return { e:'🌱', label:'Under capacity' };
+  if (v <= 5.5) return { e:'✨', label:'Perfect balance' };
+  if (v <= 6.5) return { e:'📦', label:'Getting full' };
+  if (v <= 7.5) return { e:'🏃', label:'Running hot' };
+  if (v <= 8.5) return { e:'🔥', label:'Too much' };
+  return { e:'🚨', label:'Burnout risk' };
 }
-// Satisfaction: higher is always better. 5 = "just a job".
+// Satisfaction: higher is always better. 5 = just a job.
 function satisfactionEmoji(v) {
-  if (v <= 1.5) return { e: '💔', label: 'In a bad place' };
-  if (v <= 3)   return { e: '😞', label: 'Very unhappy' };
-  if (v <= 4.5) return { e: '😕', label: 'Not great' };
-  if (v <= 5.5) return { e: '😐', label: 'Just a job' };
-  if (v <= 6.5) return { e: '🙂', label: 'Pretty good' };
-  if (v <= 7.5) return { e: '😊', label: 'Really enjoying it' };
-  if (v <= 8.5) return { e: '🌟', label: 'Love it here' };
-  return { e: '🏆', label: 'Bragging to friends' };
+  if (v <= 1.5) return { e:'💔', label:'In a bad place' };
+  if (v <= 3)   return { e:'😞', label:'Very unhappy' };
+  if (v <= 4.5) return { e:'😕', label:'Not great' };
+  if (v <= 5.5) return { e:'😐', label:'Just a job' };
+  if (v <= 6.5) return { e:'🙂', label:'Pretty good' };
+  if (v <= 7.5) return { e:'😊', label:'Really enjoying it' };
+  if (v <= 8.5) return { e:'🌟', label:'Love it here' };
+  return { e:'🏆', label:'Bragging to friends' };
 }
 
 function vibeState(w, s) {
-  // High workload (>7.5) — danger zone
-  if (w >= 7.5 && s <= 3.5) return { e: '🚨', title: 'Red Alert', desc: 'Too much work and too little joy. The team needs relief.' };
-  if (w >= 7.5 && s <= 5.5) return { e: '⚡', title: 'Under Pressure', desc: 'Heavy workload with low satisfaction. Time for a real check-in.' };
-  if (w >= 7.5)              return { e: '💪', title: 'Pushing Hard', desc: 'Lots on the plate but spirits are up. Keep an eye on sustainability.' };
-  // Low workload (<3.5) — boredom zone
-  if (w <= 3.5 && s <= 4.5) return { e: '😶', title: 'Something Is Off', desc: 'Light on work and not feeling great. Worth exploring together.' };
-  if (w <= 3.5 && s >= 7)   return { e: '🏖️', title: 'Recharge Season', desc: 'Chill load and great satisfaction. Soak it in!' };
-  if (w <= 3.5)              return { e: '😴', title: 'Room For More', desc: 'The team has capacity. Good moment to bring in new challenges.' };
-  // Sweet spot workload (3.5–6.5)
-  if (s <= 3.5)              return { e: '😞', title: 'Satisfaction Dip', desc: 'Workload is fine but satisfaction is low. What is missing?' };
-  if (s <= 5)                return { e: '😐', title: 'Just Okay', desc: 'Balanced load but the vibe is meh. What would make this week better?' };
-  if (w >= 4.5 && w <= 5.5 && s >= 7.5) return { e: '🎉', title: 'The Sweet Spot!', desc: 'Ideal workload and high satisfaction. This is exactly where we want to be.' };
-  if (s >= 7)                return { e: '✨', title: 'Doing Really Well', desc: 'Good satisfaction and a balanced load. Keep doing what you are doing.' };
-  return { e: '🙂', title: 'All Good', desc: 'Things are ticking along nicely this week.' };
+  if (w >= 7.5 && s <= 3.5) return { e:'🚨', title:'Red Alert',       desc:'Too much work and too little joy. The team needs relief.' };
+  if (w >= 7.5 && s <= 5.5) return { e:'⚡', title:'Under Pressure',  desc:'Heavy workload with low satisfaction. Time for a real check-in.' };
+  if (w >= 7.5)              return { e:'💪', title:'Pushing Hard',    desc:'Lots on the plate but spirits are up. Keep an eye on sustainability.' };
+  if (w <= 3.5 && s <= 4.5) return { e:'😶', title:'Something Is Off',desc:'Light on work and not feeling great. Worth exploring together.' };
+  if (w <= 3.5 && s >= 7)   return { e:'🏖️', title:'Recharge Season', desc:'Chill load and great satisfaction. Soak it in!' };
+  if (w <= 3.5)              return { e:'😴', title:'Room For More',   desc:'The team has capacity. Good moment to bring in new challenges.' };
+  if (s <= 3.5)              return { e:'😞', title:'Satisfaction Dip',desc:'Workload is fine but satisfaction is low. What is missing?' };
+  if (s <= 5)                return { e:'😐', title:'Just Okay',       desc:'Balanced load but the vibe is meh. What would make this week better?' };
+  if (w >= 4.5 && w <= 5.5 && s >= 7.5) return { e:'🎉', title:'The Sweet Spot!', desc:'Ideal workload and high satisfaction. This is exactly where we want to be.' };
+  if (s >= 7)                return { e:'✨', title:'Doing Really Well',desc:'Good satisfaction and a balanced load. Keep doing what you are doing.' };
+  return { e:'🙂', title:'All Good',         desc:'Things are ticking along nicely this week.' };
 }
 
-/* ── Render last updated ── */
-document.getElementById('lastDate').textContent = fmtDate(now.date);
+/* ── Set last date ── */
+document.getElementById('lastDate').textContent = fmtDate(now.date).toUpperCase();
 
-/* ── Render hero gauges ── */
-function trendTag(diff, isWorkload) {
-  const abs = r1(Math.abs(diff));
-  if (Math.abs(diff) < 0.05) {
-    return `<span class="trend-tag tag-neutral">→ same as last week</span>`;
-  }
-  const up = diff > 0;
-  const sign = up ? '+' : '−';
-  // workload up = bad; satisfaction up = good
-  const good = isWorkload ? !up : up;
-  const cls = good ? 'tag-up-good' : 'tag-up-bad';
-  const arrow = up ? '↑' : '↓';
-  return `<span class="trend-tag ${cls}">${arrow} ${sign}${abs} vs last week</span>`;
-}
-
+/* ── Gauge HTML (ASCII bar) ── */
+const BAR_W = 16;
 function gaugeHTML(value, color, label, isWorkload) {
   const meta = isWorkload ? workloadEmoji(value) : satisfactionEmoji(value);
   const diff = prev ? value - (isWorkload ? prev.avgW : prev.avgS) : null;
-  const offset = +(CIRC * (1 - value / 10)).toFixed(2);
+  const filled = Math.round((value / 10) * BAR_W);
+
+  let ttag = '';
+  if (diff !== null) {
+    const abs = r1(Math.abs(diff));
+    if (Math.abs(diff) < 0.05) {
+      ttag = `<div class="ttag ttag-neutral">━ NO CHANGE</div>`;
+    } else {
+      const up = diff > 0;
+      const good = isWorkload ? !up : up;
+      const arrow = up ? '▲' : '▼';
+      const sign = up ? '+' : '';
+      ttag = `<div class="ttag ${good?'ttag-good':'ttag-bad'}">${arrow} ${sign}${abs} VS PREV</div>`;
+    }
+  }
+
   return `
     <div class="card gauge-card">
-      <div class="gauge-label">${label}</div>
-      <div class="gauge-wrap">
-        <svg class="gauge-svg" viewBox="0 0 130 130">
-          <circle class="gauge-track" cx="65" cy="65" r="57"/>
-          <circle class="gauge-arc" cx="65" cy="65" r="57"
-            data-offset="${offset}"
-            style="stroke:${color}; stroke-dasharray:${CIRC}; stroke-dashoffset:${CIRC}"/>
-        </svg>
-        <div class="gauge-center">
-          <div class="gauge-num" style="color:${color}">${r1(value)}</div>
-          <div class="gauge-denom">/ 10</div>
-        </div>
+      <div class="g-label">${label}</div>
+      <div class="g-num" style="color:${color}">
+        <span class="count-up" data-target="${value}">0.0</span>
       </div>
-      <div class="gauge-emoji">${meta.e}</div>
-      <div class="gauge-status">${meta.label}</div>
-      ${diff !== null ? trendTag(diff, isWorkload) : ''}
+      <div class="g-denom">/ 10</div>
+      <div class="g-bar-row">
+        <span class="g-bracket">[</span><span class="g-bar" style="color:${color}" data-filled="${filled}" data-total="${BAR_W}">${'░'.repeat(BAR_W)}</span><span class="g-bracket">]</span>
+      </div>
+      <div class="g-emoji">${meta.e}</div>
+      <div class="g-status" style="color:${color}">${meta.label.toUpperCase()}</div>
+      ${ttag}
     </div>`;
 }
 
@@ -506,232 +576,231 @@ const vibe = vibeState(now.avgW, now.avgS);
 const vibeHTML = `
   <div class="card vibe-card">
     <span class="vibe-emoji">${vibe.e}</span>
-    <div class="vibe-title">${vibe.title}</div>
+    <div class="vibe-title">${vibe.title.toUpperCase()}</div>
     <div class="vibe-desc">${vibe.desc}</div>
-    <div class="responses-pill">
-      ${now.n} response${now.n !== 1 ? 's' : ''} this week
-    </div>
-    <button class="suggest-btn" id="suggestBtn">💡 Send an anonymous suggestion</button>
+    <div class="resp-pill">[ ${now.n} RESPONSE${now.n!==1?'S':''} THIS WEEK ]</div>
+    <button class="suggest-btn" id="suggestBtn">💡 SEND ANONYMOUS SUGGESTION</button>
   </div>`;
 
 document.getElementById('heroGrid').innerHTML =
-  gaugeHTML(now.avgW, COLOR_W, 'Workload', true) +
-  gaugeHTML(now.avgS, COLOR_S, 'Satisfaction', false) +
+  gaugeHTML(now.avgW, COLOR_W, 'WORKLOAD', true) +
+  gaugeHTML(now.avgS, COLOR_S, 'SATISFACTION', false) +
   vibeHTML;
-
-/* ── Animate gauges ── */
-requestAnimationFrame(() => {
-  setTimeout(() => {
-    document.querySelectorAll('.gauge-arc').forEach(el => {
-      el.style.strokeDashoffset = el.dataset.offset;
-    });
-  }, 80);
-});
 
 /* ── Alerts ── */
 const alertsEl = document.getElementById('alerts');
 const alertsList = [];
-
-// All-time max/min for context
 const maxS = Math.max(...allS), minS = Math.min(...allS);
-const maxW = Math.max(...allW), minW = Math.min(...allW);
 
-// Workload alerts — 5 is ideal, both extremes are worth flagging
 if (now.avgW >= 8)
-  alertsList.push({ type:'danger', icon:'🔥', title:'Heavy workload this week.', body:`Average is ${r1(now.avgW)}/10 — that is the burnout zone on our scale. Is there scope to cut back or redistribute?` });
+  alertsList.push({type:'danger',icon:'🔥',title:'HEAVY WORKLOAD THIS WEEK',body:`Average is ${r1(now.avgW)}/10 — that is the burnout zone. Is there scope to cut back or redistribute?`});
 else if (now.avgW >= 6.5)
-  alertsList.push({ type:'warn', icon:'📦', title:'Load is above the sweet spot.', body:`At ${r1(now.avgW)}/10, the team is stretched. Ideal is around 5 — productive, but with room to breathe.` });
+  alertsList.push({type:'warn',icon:'📦',title:'LOAD IS ABOVE THE SWEET SPOT',body:`At ${r1(now.avgW)}/10, the team is stretched. Ideal is around 5 — productive, but with room to breathe.`});
 else if (now.avgW >= 4.5 && now.avgW <= 5.5)
-  alertsList.push({ type:'good', icon:'✨', title:'Workload is right in the sweet spot!', body:`${r1(now.avgW)}/10 is exactly where we want to be — enough work to stay sharp, with room to grow.` });
+  alertsList.push({type:'good',icon:'✨',title:'WORKLOAD IS RIGHT IN THE SWEET SPOT',body:`${r1(now.avgW)}/10 — enough work to stay sharp, with room to grow. Nice.`});
 else if (now.avgW <= 3)
-  alertsList.push({ type:'info', icon:'🥱', title:'Very light week.', body:`At ${r1(now.avgW)}/10, the team has a lot of free capacity. Good time to tackle design debt, learning, or propose new initiatives.` });
+  alertsList.push({type:'info',icon:'🥱',title:'VERY LIGHT WEEK',body:`At ${r1(now.avgW)}/10, the team has a lot of free capacity. Good time to tackle design debt, learning, or propose new initiatives.`});
 else if (now.avgW <= 4)
-  alertsList.push({ type:'info', icon:'🌱', title:'Lighter than ideal.', body:`At ${r1(now.avgW)}/10, there is room for more. Consider pulling in new work or investing in professional growth.` });
+  alertsList.push({type:'info',icon:'🌱',title:'LIGHTER THAN IDEAL',body:`At ${r1(now.avgW)}/10, there is room for more. Consider pulling in new work or investing in professional growth.`});
 
-// Satisfaction alerts
 if (now.avgS <= 4)
-  alertsList.push({ type:'danger', icon:'💔', title:'Satisfaction is really low.', body:`At ${r1(now.avgS)}/10, the team is in the "unhappy" zone on our scale. This deserves an open conversation.` });
+  alertsList.push({type:'danger',icon:'💔',title:'SATISFACTION IS REALLY LOW',body:`At ${r1(now.avgS)}/10, the team is in the unhappy zone. This deserves an open conversation.`});
 else if (now.avgS <= 5.5)
-  alertsList.push({ type:'warn', icon:'😕', title:'Satisfaction is below the midpoint.', body:`${r1(now.avgS)}/10 is in the "it is just a job" range. What would make a meaningful difference?` });
+  alertsList.push({type:'warn',icon:'😕',title:'SATISFACTION BELOW MIDPOINT',body:`${r1(now.avgS)}/10 is in the "just a job" range. What would make a meaningful difference?`});
 else if (now.avgS >= 8)
-  alertsList.push({ type:'good', icon:'🌟', title:'The team is absolutely loving it!', body:`${r1(now.avgS)}/10 — that is the "bragging to friends" zone on our scale. Amazing!` });
+  alertsList.push({type:'good',icon:'🌟',title:'THE TEAM IS ABSOLUTELY LOVING IT',body:`${r1(now.avgS)}/10 — that is the "bragging to friends" zone. Amazing!`});
 else if (now.avgS >= 7)
-  alertsList.push({ type:'good', icon:'😊', title:'Great satisfaction scores this week.', body:`At ${r1(now.avgS)}/10, the team is genuinely enjoying their work. Keep it up!` });
+  alertsList.push({type:'good',icon:'😊',title:'GREAT SATISFACTION SCORES THIS WEEK',body:`At ${r1(now.avgS)}/10, the team is genuinely enjoying their work. Keep it up!`});
 
-// 3-week declining satisfaction
 if (weeks.length >= 3) {
-  const last3 = weeks.slice(-3);
-  if (last3[1].avgS < last3[0].avgS && last3[2].avgS < last3[1].avgS)
-    alertsList.push({ type:'warn', icon:'📉', title:'3 weeks of declining satisfaction.', body:`The trend is consistently moving down. What changed three weeks ago?` });
+  const l3 = weeks.slice(-3);
+  if (l3[1].avgS < l3[0].avgS && l3[2].avgS < l3[1].avgS)
+    alertsList.push({type:'warn',icon:'📉',title:'3 WEEKS OF DECLINING SATISFACTION',body:'The trend is consistently moving down. What changed three weeks ago?'});
 }
-
-// Record low satisfaction this week
 if (now.avgS === minS && weeks.length > 4)
-  alertsList.push({ type:'danger', icon:'🏴', title:'All-time low satisfaction!', body:`${r1(now.avgS)}/10 is the lowest satisfaction average since tracking began.` });
-
-// Record high satisfaction
+  alertsList.push({type:'danger',icon:'🏴',title:'ALL-TIME LOW SATISFACTION',body:`${r1(now.avgS)}/10 is the lowest satisfaction average since tracking began.`});
 if (now.avgS === maxS && weeks.length > 4)
-  alertsList.push({ type:'good', icon:'🏆', title:'All-time record satisfaction!', body:`${r1(now.avgS)}/10 — that's the best satisfaction score ever recorded.` });
-
-// Low response count
+  alertsList.push({type:'good',icon:'🏆',title:'ALL-TIME RECORD SATISFACTION',body:`${r1(now.avgS)}/10 — the best satisfaction score ever recorded.`});
 if (now.n === 1)
-  alertsList.push({ type:'info', icon:'👋', title:'Only 1 response this week.', body:`Averages are less reliable with just one response. Remind the team to fill in the pulse check!` });
+  alertsList.push({type:'info',icon:'👋',title:'ONLY 1 RESPONSE THIS WEEK',body:'Averages are less reliable with a single response. Remind the team to fill in the pulse check!'});
 
-alertsEl.innerHTML = alertsList.map(a => `
+alertsEl.innerHTML = alertsList.map(a=>`
   <div class="alert alert-${a.type}">
-    <span class="alert-icon">${a.icon}</span>
-    <div class="alert-body"><strong>${a.title}</strong>${a.body}</div>
+    <span class="a-icon">${a.icon}</span>
+    <div class="a-body"><strong>${a.title}</strong>${a.body}</div>
   </div>`).join('');
 
 /* ── Chart ── */
-const labels = weeks.map(w => fmtDate(w.date));
-const dataW  = weeks.map(w => w.avgW);
-const dataS  = weeks.map(w => w.avgS);
-
+const chartLabels = weeks.map(w => fmtDate(w.date));
+const dataW = weeks.map(w => w.avgW);
+const dataS = weeks.map(w => w.avgS);
 const ctx = document.getElementById('mainChart').getContext('2d');
-
-const gradW = ctx.createLinearGradient(0, 0, 0, 260);
-gradW.addColorStop(0, 'rgba(249,115,22,0.3)');
-gradW.addColorStop(1, 'rgba(249,115,22,0)');
-
-const gradS = ctx.createLinearGradient(0, 0, 0, 260);
-gradS.addColorStop(0, 'rgba(56,189,248,0.3)');
-gradS.addColorStop(1, 'rgba(56,189,248,0)');
-
 new Chart(ctx, {
   type: 'line',
   data: {
-    labels,
+    labels: chartLabels,
     datasets: [
-      {
-        label: 'Workload',
-        data: dataW,
-        borderColor: COLOR_W,
-        backgroundColor: gradW,
-        borderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 6,
-        pointBackgroundColor: COLOR_W,
-        tension: 0.35,
-        fill: true,
-      },
-      {
-        label: 'Satisfaction',
-        data: dataS,
-        borderColor: COLOR_S,
-        backgroundColor: gradS,
-        borderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 6,
-        pointBackgroundColor: COLOR_S,
-        tension: 0.35,
-        fill: true,
-      }
+      { label:'WORKLOAD',     data:dataW, borderColor:COLOR_W, backgroundColor:'transparent',
+        borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:COLOR_W,
+        pointStyle:'rect', tension:0 },
+      { label:'SATISFACTION', data:dataS, borderColor:COLOR_S, backgroundColor:'transparent',
+        borderWidth:1.5, pointRadius:2, pointHoverRadius:5, pointBackgroundColor:COLOR_S,
+        pointStyle:'rect', tension:0 }
     ]
   },
   options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:'index', intersect:false },
     plugins: {
-      legend: {
-        labels: {
-          color: '#7d8590',
-          usePointStyle: true,
-          pointStyle: 'circle',
-          padding: 20,
-          font: { size: 12 }
-        }
-      },
+      legend: { labels:{ color:'#aaa', usePointStyle:true, padding:20,
+        font:{ family:"'Space Mono', monospace", size:12 } } },
       tooltip: {
-        backgroundColor: '#1c2333',
-        borderColor: '#30363d',
-        borderWidth: 1,
-        padding: 12,
-        titleColor: '#e6edf3',
-        bodyColor: '#7d8590',
-        callbacks: {
-          label: ctx => ` ${ctx.dataset.label}: ${r1(ctx.raw)}/10`
-        }
+        backgroundColor:'#111', borderColor:'#222', borderWidth:1, padding:10,
+        titleColor:'#00ff41', bodyColor:'#aaa',
+        bodyFont:{ family:"'Space Mono', monospace", size:11 },
+        titleFont:{ family:"'Space Mono', monospace", size:11 },
+        callbacks:{ label: c => ` ${c.dataset.label}: ${r1(c.raw)}/10` }
       }
     },
     scales: {
-      x: {
-        ticks: {
-          color: '#484f58',
-          maxTicksLimit: 12,
-          font: { size: 11 }
-        },
-        grid: { color: 'rgba(48,54,61,0.5)' }
-      },
-      y: {
-        min: 1, max: 10,
-        ticks: { color: '#484f58', stepSize: 2 },
-        grid: { color: 'rgba(48,54,61,0.5)' }
-      }
+      x:{ ticks:{ color:'#777777', maxTicksLimit:10, font:{ family:"'Space Mono',monospace", size:11 } }, grid:{ color:'#1e1e1e' } },
+      y:{ min:1, max:10, ticks:{ color:'#777777', stepSize:2, font:{ family:"'Space Mono',monospace", size:11 } }, grid:{ color:'#1e1e1e' } }
     }
   }
 });
 
 /* ── All-time stats ── */
 const totalResponses = raw.length;
-const allTimeW = r1(raw.reduce((a,r) => a + r.w, 0) / raw.length);
-const allTimeS = r1(raw.reduce((a,r) => a + r.s, 0) / raw.length);
-
-const bestSWeek  = weeks.reduce((a,b) => b.avgS > a.avgS ? b : a);
-const worstSWeek = weeks.reduce((a,b) => b.avgS < a.avgS ? b : a);
-
-const statsEl = document.getElementById('statsGrid');
-statsEl.innerHTML = [
-  { val: allTimeW,       color: '#f97316', lbl: '⚖️ avg workload · all time' },
-  { val: allTimeS,       color: '#38bdf8', lbl: '💙 avg satisfaction · all time' },
-  { val: `${r1(bestSWeek.avgS)} <span style="font-size:1rem;color:#7d8590">on ${fmtDate(bestSWeek.date)}</span>`,
-    color: '#22c55e', lbl: '🌟 peak satisfaction week' },
-  { val: totalResponses, color: '#7d8590', lbl: '📊 total pulse responses' },
-].map(s => `
+const allTimeW = r1(raw.reduce((a,r)=>a+r.w,0)/raw.length);
+const allTimeS = r1(raw.reduce((a,r)=>a+r.s,0)/raw.length);
+const bestSWeek = weeks.reduce((a,b)=>b.avgS>a.avgS?b:a);
+document.getElementById('statsGrid').innerHTML = [
+  { val:allTimeW, color:COLOR_W, lbl:'⚖️ AVG WORKLOAD<br>ALL TIME' },
+  { val:allTimeS, color:COLOR_S, lbl:'💙 AVG SATISFACTION<br>ALL TIME' },
+  { val:`${r1(bestSWeek.avgS)}<span style="font-size:1.1rem;color:#999"> ON ${fmtDate(bestSWeek.date).toUpperCase()}</span>`, color:'#00ff41', lbl:'🌟 PEAK SATISFACTION<br>WEEK' },
+  { val:totalResponses, color:'#aaa', lbl:'📊 TOTAL PULSE<br>RESPONSES' },
+].map(s=>`
   <div class="stat">
     <div class="stat-val" style="color:${s.color}">${s.val}</div>
     <div class="stat-lbl">${s.lbl}</div>
   </div>`).join('');
 
-/* ── Suggestions modal ── */
-// Paste your Apps Script web app URL here after deploying
-const SUGGESTIONS_URL = 'https://script.google.com/macros/s/AKfycbzpo_BJKGJTGRZ4oZwsFQltA7kmsunKFiIh77wXk_TPaxM-48q9G81T2YWHR40A_QbL/exec';
+/* ── Animations ── */
+function animateBars() {
+  document.querySelectorAll('.g-bar').forEach(bar => {
+    const filled = parseInt(bar.dataset.filled);
+    const total  = parseInt(bar.dataset.total);
+    let cur = 0;
+    const iv = setInterval(() => {
+      cur = Math.min(cur + 1, filled);
+      bar.textContent = '█'.repeat(cur) + '░'.repeat(total - cur);
+      if (cur >= filled) clearInterval(iv);
+    }, 38);
+  });
+}
 
-const overlay   = document.getElementById('modalOverlay');
-const closeBtn  = document.getElementById('modalClose');
-const sendBtn   = document.getElementById('modalSend');
-const textarea  = document.getElementById('suggestionText');
+function animateCounters() {
+  document.querySelectorAll('.count-up').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    let cur = 0, step = 0;
+    const total = 22;
+    const iv = setInterval(() => {
+      step++;
+      cur = Math.min((step / total) * target, target);
+      el.textContent = r1(cur);
+      if (step >= total) { el.textContent = r1(target); clearInterval(iv); }
+    }, 45);
+  });
+}
 
-document.addEventListener('click', e => {
-  if (e.target.id === 'suggestBtn') overlay.classList.add('open');
-});
-closeBtn.addEventListener('click', () => closeModal());
+function typewriter(el, text, speed) {
+  el.textContent = '';
+  let i = 0;
+  const iv = setInterval(() => {
+    el.textContent = text.slice(0, i + 1) + (i < text.length - 1 ? '█' : '');
+    i++;
+    if (i >= text.length) { el.textContent = text; clearInterval(iv); }
+  }, speed);
+}
+
+/* ── Boot sequence ── */
+async function runBoot() {
+  const log = document.getElementById('bootLog');
+  const bootEl = document.getElementById('boot');
+  const mainEl = document.getElementById('main');
+
+  const lines = [
+    { t:'> DESIGN_TEAM_HEALTH_MONITOR v2.0', d:160 },
+    { t:'> ─────────────────────────────────────────', d:80 },
+    { t:'> INITIALIZING SYSTEM...', d:180 },
+    { t:`> LOADING ${raw.length} DATA POINTS.............. OK`, d:220 },
+    { t:`> COMPUTING ${weeks.length} WEEKLY AVERAGES......... OK`, d:220 },
+    { t:'> RUNNING TREND ANALYSIS.............. OK', d:200 },
+    { t:`> LATEST ENTRY: ${fmtDate(now.date).toUpperCase()}`, d:150 },
+    { t:`> WORKLOAD THIS WEEK: ${r1(now.avgW)}/10 ${workloadEmoji(now.avgW).e}`, d:150 },
+    { t:`> SATISFACTION THIS WEEK: ${r1(now.avgS)}/10 ${satisfactionEmoji(now.avgS).e}`, d:150 },
+    { t:'> ─────────────────────────────────────────', d:80 },
+    { t:'> RENDERING DASHBOARD...', d:300 },
+    { t:'', d:100 },
+    { t:'> READY.', d:400 },
+  ];
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  log.appendChild(cursor);
+
+  for (const line of lines) {
+    const ln = document.createElement('span');
+    ln.className = 'ln';
+    ln.textContent = line.t;
+    log.insertBefore(ln, cursor);
+    await new Promise(r => setTimeout(r, line.d));
+  }
+
+  await new Promise(r => setTimeout(r, 300));
+  bootEl.classList.add('hide');
+  mainEl.classList.remove('hide');
+  setTimeout(() => {
+    typewriter(document.getElementById('mainTitle'), 'DESIGN TEAM HEALTH', 55);
+    animateBars();
+    animateCounters();
+  }, 200);
+}
+runBoot();
+
+/* ── Suggestion modal ── */
+const SUGGESTIONS_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+const overlay  = document.getElementById('modalOverlay');
+const closeBtn = document.getElementById('modalClose');
+const sendBtn  = document.getElementById('modalSend');
+const textarea = document.getElementById('suggestionText');
+
+document.addEventListener('click', e => { if (e.target.id === 'suggestBtn') overlay.classList.add('open'); });
+closeBtn.addEventListener('click', closeModal);
 overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 function closeModal() {
   overlay.classList.remove('open');
   textarea.value = '';
-  sendBtn.textContent = 'Send →';
+  sendBtn.textContent = 'SEND →';
   sendBtn.disabled = false;
 }
 
 sendBtn.addEventListener('click', async () => {
   const text = textarea.value.trim();
   if (!text) { textarea.focus(); return; }
-
-  sendBtn.textContent = 'Sending…';
+  sendBtn.textContent = 'SENDING...';
   sendBtn.disabled = true;
-
   try {
     const body = new FormData();
     body.append('suggestion', text);
-    await fetch(SUGGESTIONS_URL, { method: 'POST', mode: 'no-cors', body });
-    sendBtn.textContent = '✓ Sent — thank you!';
+    await fetch(SUGGESTIONS_URL, { method:'POST', mode:'no-cors', body });
+    sendBtn.textContent = '> SENT. THANK YOU.';
     setTimeout(closeModal, 1800);
   } catch {
-    sendBtn.textContent = 'Something went wrong — try again';
+    sendBtn.textContent = 'ERROR — TRY AGAIN';
     sendBtn.disabled = false;
   }
 });
