@@ -166,11 +166,13 @@
     .hero .card:last-child { border-right: none; }
     @media (max-width: 700px) {
       .hero { grid-template-columns: 1fr 1fr; }
+      .hero .card:nth-child(2) { border-right: none; }
       .hero .vibe-card { grid-column: 1/-1; border-top: 1px solid var(--border); border-right: none; }
     }
     @media (max-width: 460px) {
       .hero { grid-template-columns: 1fr; }
       .hero .card { border-right: none; border-bottom: 1px solid var(--border); }
+      .hero .card:last-child { border-bottom: none; }
     }
 
     /* ── Gauge card ── */
@@ -230,14 +232,56 @@
       font-family: var(--display); font-size: 1rem;
       color: var(--cyan); letter-spacing: .05em; margin-top: .9rem;
     }
-    .suggest-btn {
-      margin-top: .75rem; background: none;
-      border: 1px solid var(--border); color: var(--muted);
-      padding: .3rem .8rem; font-family: var(--mono); font-size: .85rem;
-      cursor: pointer; letter-spacing: .05em; text-transform: uppercase;
-      transition: border-color .15s, color .15s;
+    /* ── Suggest section ── */
+    .suggest-section {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap;
+      margin-top: 1rem;
+      padding: 1.75rem 2rem;
+      border: 1px solid var(--green);
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
     }
-    .suggest-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+    .suggest-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg, rgba(0,255,65,.03) 0px, rgba(0,255,65,.03) 1px, transparent 1px, transparent 40px
+      );
+      pointer-events: none;
+    }
+    .suggest-eyebrow {
+      font-size: .85rem; color: var(--green);
+      letter-spacing: .12em; text-transform: uppercase;
+      font-weight: 700; margin-bottom: .4rem;
+    }
+    .suggest-headline {
+      font-family: var(--display); font-size: 1.8rem;
+      color: var(--text); letter-spacing: .05em; margin-bottom: .4rem;
+    }
+    .suggest-body {
+      font-size: .9rem; color: var(--muted); line-height: 1.55; max-width: 480px;
+    }
+    .suggest-cta {
+      flex-shrink: 0;
+      background: var(--green); color: #000;
+      border: none; padding: .85rem 2rem;
+      font-family: var(--mono); font-size: .9rem;
+      font-weight: 700; cursor: pointer;
+      letter-spacing: .12em; text-transform: uppercase;
+      transition: opacity .15s, box-shadow .15s;
+      white-space: nowrap;
+      position: relative; z-index: 1;
+    }
+    .suggest-cta:hover {
+      opacity: .85;
+      box-shadow: 4px 4px 0 rgba(0,255,65,.4);
+    }
+    @media (max-width: 600px) {
+      .suggest-section { flex-direction: column; align-items: flex-start; }
+      .suggest-cta { width: 100%; text-align: center; }
+    }
 
     /* ── Alerts ── */
     .alerts { display: flex; flex-direction: column; margin-top: 1rem; margin-bottom: 1rem; }
@@ -359,6 +403,43 @@
       font-size: .85rem; margin-top: 3rem; letter-spacing: .1em;
       text-transform: uppercase;
     }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-top: 1px solid var(--border); }
+      .stat:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+      .suggest-section { padding: 1.5rem; gap: 1.25rem; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1.25rem .75rem 4rem; font-size: 15px; }
+      .header { padding: 1.25rem 1rem; margin-bottom: 1.5rem; }
+      .header-sub { font-size: .8rem; flex-wrap: wrap; gap: .35rem; line-height: 1.6; }
+      .scale-legend { flex-direction: column; }
+      .scale-row { flex-wrap: wrap; gap: .4rem; }
+      .sec { font-size: .95rem; margin: 1.5rem 0 0; }
+      .sec::before { content: '═ '; }
+      .chart-box { height: 180px; }
+      .g-num { font-size: 3.5rem; }
+      .g-bar-row { font-size: 1rem; }
+      .vibe-emoji { font-size: 3.2rem; }
+      .vibe-title { font-size: 1.3rem; }
+      .suggest-headline { font-size: 1.5rem; }
+      .modal-box { padding: 1.25rem; }
+      .modal-head h2 { font-size: 1.1rem; }
+    }
+
+    @media (max-width: 400px) {
+      body { font-size: 14px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+      .stat:nth-child(3), .stat:nth-child(4) { border-top: none; }
+      .g-bar-row { font-size: .9rem; }
+      .boot-log { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
@@ -414,6 +495,16 @@
   <div class="sec">ALL-TIME</div>
   <div class="stats-wrap">
     <div class="stats-grid" id="statsGrid"></div>
+  </div>
+
+  <div class="sec">HAVE YOUR SAY</div>
+  <div class="suggest-section">
+    <div class="suggest-left">
+      <div class="suggest-eyebrow">💡 ANONYMOUS SUGGESTION BOX</div>
+      <div class="suggest-headline">Got something on your mind?</div>
+      <div class="suggest-body">Share feedback, ideas, or anything bothering you. No names — ever. The team lead reads every message.</div>
+    </div>
+    <button class="suggest-cta" id="suggestBtn">SEND A SUGGESTION →</button>
   </div>
 
 </div>
@@ -579,7 +670,6 @@ const vibeHTML = `
     <div class="vibe-title">${vibe.title.toUpperCase()}</div>
     <div class="vibe-desc">${vibe.desc}</div>
     <div class="resp-pill">[ ${now.n} RESPONSE${now.n!==1?'S':''} THIS WEEK ]</div>
-    <button class="suggest-btn" id="suggestBtn">💡 SEND ANONYMOUS SUGGESTION</button>
   </div>`;
 
 document.getElementById('heroGrid').innerHTML =
