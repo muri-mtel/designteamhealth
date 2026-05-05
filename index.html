@@ -223,6 +223,63 @@
     }
     .scale-row span { white-space: nowrap; }
 
+    /* ── Suggest button ── */
+    .suggest-btn {
+      margin-top: 0.9rem;
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 20px;
+      padding: 0.4rem 1.1rem; font-size: 0.78rem;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+    .suggest-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #1c2333; border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem; width: min(480px, 92vw);
+      transform: translateY(16px); transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.4rem;
+    }
+    .modal-head h2 { font-size: 1.05rem; font-weight: 700; }
+    .modal-close {
+      background: none; border: none; color: var(--muted);
+      font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0.2rem;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 1.1rem; }
+    .modal-textarea {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: inherit;
+      font-size: 0.9rem; padding: 0.85rem 1rem; resize: vertical;
+      min-height: 100px; outline: none; transition: border-color 0.2s;
+    }
+    .modal-textarea:focus { border-color: var(--blue); }
+    .modal-textarea::placeholder { color: var(--muted2); }
+    .modal-footer {
+      display: flex; justify-content: flex-end; margin-top: 1rem;
+    }
+    .modal-send {
+      background: var(--blue); color: #0d1117;
+      border: none; border-radius: 10px;
+      padding: 0.6rem 1.4rem; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+    }
+    .modal-send:hover { opacity: 0.85; }
+    .modal-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
     footer {
       text-align: center; color: var(--muted2);
       font-size: 0.75rem; margin-top: 4rem;
@@ -276,6 +333,20 @@
   </div>
 
 </div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>💡 Anonymous suggestion</h2>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <p class="modal-sub">Your name is never attached to this. The team lead sees all suggestions.</p>
+    <textarea class="modal-textarea" id="suggestionText" placeholder="What's on your mind?"></textarea>
+    <div class="modal-footer">
+      <button class="modal-send" id="modalSend">Send →</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   <span>No individual scores are shown.</span> Only anonymised team averages. 💙
 </footer>
@@ -440,6 +511,7 @@ const vibeHTML = `
     <div class="responses-pill">
       ${now.n} response${now.n !== 1 ? 's' : ''} this week
     </div>
+    <button class="suggest-btn" id="suggestBtn">💡 Send an anonymous suggestion</button>
   </div>`;
 
 document.getElementById('heroGrid').innerHTML =
@@ -621,6 +693,48 @@ statsEl.innerHTML = [
     <div class="stat-val" style="color:${s.color}">${s.val}</div>
     <div class="stat-lbl">${s.lbl}</div>
   </div>`).join('');
+
+/* ── Suggestions modal ── */
+// Paste your Apps Script web app URL here after deploying
+const SUGGESTIONS_URL = 'https://script.google.com/macros/s/AKfycbzh4j4krUvFiFzYZMMUhlyr8veg7Yv8lVbEeJ_U5VFgX-FiWVG6jUiWeW10YYsqNU8P/exec';
+
+const overlay   = document.getElementById('modalOverlay');
+const closeBtn  = document.getElementById('modalClose');
+const sendBtn   = document.getElementById('modalSend');
+const textarea  = document.getElementById('suggestionText');
+
+document.addEventListener('click', e => {
+  if (e.target.id === 'suggestBtn') overlay.classList.add('open');
+});
+closeBtn.addEventListener('click', () => closeModal());
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function closeModal() {
+  overlay.classList.remove('open');
+  textarea.value = '';
+  sendBtn.textContent = 'Send →';
+  sendBtn.disabled = false;
+}
+
+sendBtn.addEventListener('click', async () => {
+  const text = textarea.value.trim();
+  if (!text) { textarea.focus(); return; }
+
+  sendBtn.textContent = 'Sending…';
+  sendBtn.disabled = true;
+
+  try {
+    const body = new FormData();
+    body.append('suggestion', text);
+    await fetch(SUGGESTIONS_URL, { method: 'POST', mode: 'no-cors', body });
+    sendBtn.textContent = '✓ Sent — thank you!';
+    setTimeout(closeModal, 1800);
+  } catch {
+    sendBtn.textContent = 'Something went wrong — try again';
+    sendBtn.disabled = false;
+  }
+});
 </script>
 </body>
 </html>
